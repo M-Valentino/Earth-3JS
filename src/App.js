@@ -50,9 +50,9 @@ const App = () => {
           color="blue"
           args={[1, sphereTrisAmount, sphereTrisAmount]}
         />
-        <meshBasicMaterial attach="material">
+        <meshStandardMaterial attach="material">
           <primitive attach="map" object={texture} />
-        </meshBasicMaterial>
+        </meshStandardMaterial>
       </mesh>
     );
   };
@@ -72,7 +72,7 @@ const App = () => {
           args={[1, sphereTrisAmount, sphereTrisAmount]}
         />
         <meshBasicMaterial attach="material" transparent={true}>
-          <primitive attach="map" object={texture} transparent={true} />
+          <primitive attach="map" object={texture}  />
         </meshBasicMaterial>
       </mesh>
     );
@@ -98,7 +98,9 @@ const App = () => {
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
+
         <boxBufferGeometry args={[1.2, 0.5, 0.05]} />
+        <meshStandardMaterial color='white'/>
       </mesh>
     );
   };
@@ -108,6 +110,9 @@ const App = () => {
       <Earth position={[0, 0, 0]} />
       <Clouds position={[0, 0, 0]} />
       <SettingsButton position={[-1.75, 3.2, 0]} onClick={toggleGraphics} />
+      <ambientLight intensity={0.1} />
+      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
+      <pointLight position={[-1.65, 7.2, 1]} angle={0.5} penumbra={0.5}/>
     </Canvas>
   );
 };
