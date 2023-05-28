@@ -1,19 +1,24 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useState } from "react";
 import { Canvas, useFrame } from "react-three-fiber";
 import * as THREE from "three";
 import './App.css'
 import react from './images/clouds.png';
 // https://www.solarsystemscope.com/textures/
 // https://www.pngkey.com/detail/u2w7w7t4r5e6q8y3_earth-clouds-2048-earth-clouds-texture-png/
-import five from "./images/8k_earth_daymap.jpg";
+import TwoKEarth from "./images/2k_earth_daymap.webp";
+import FourKEarth from "./images/4k_earth_daymap.webp";
 
-const Box = (props) => {
+
+
+const Earth = (props) => {
+  const [textureToUse, setTextureToUse] = React.useState(FourKEarth);
+
   const mesh = useRef();
   useFrame(() => {
      mesh.current.rotation.y += 0.0008;
   });
   
-  const texture = useMemo(() => new THREE.TextureLoader().load(five), []);
+  const texture = useMemo(() => new THREE.TextureLoader().load(textureToUse), []);
   
   return (
     <mesh
@@ -29,7 +34,7 @@ const Box = (props) => {
   );
 }
 
-const Box2 = (props) => {
+const Clouds = (props) => {
   const mesh = useRef();
   useFrame(() => {
      mesh.current.rotation.y += 0.001;
@@ -54,8 +59,8 @@ const Box2 = (props) => {
 const App = () => {
   return (
     <Canvas>
-      <Box position={[0, 0, 0]} />
-      <Box2 position={[0, 0, 0]} />
+      <Earth position={[0, 0, 0]} />
+      <Clouds position={[0, 0, 0]} />
     </Canvas>
   );
 }
