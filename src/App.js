@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState } from "react";
+import React, { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "react-three-fiber";
 import * as THREE from "three";
 import "./App.css";
@@ -78,14 +78,37 @@ const App = () => {
     );
   };
 
+  const SettingsButton = (props) => {
+    const [hovered, setHovered] = useState(false);
+
+    useEffect(() => {
+      document.body.style.cursor = hovered ? "pointer" : "auto";
+    }, [hovered]);
+    const mesh = useRef();
+    useFrame(() => {
+      mesh.current.rotation.x = Math.sin(Date.now() * 0.001) * Math.PI * 0.01;
+      mesh.current.rotation.y = Math.sin(Date.now() * 0.001) * Math.PI * 0.004;
+      mesh.current.rotation.z = Math.sin(Date.now() * 0.001) * Math.PI * 0.015;
+    });
+    return (
+      <mesh
+        {...props}
+        ref={mesh}
+        scale={[1, 1, 1]}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      >
+        <boxBufferGeometry args={[1.2, 0.5, 0.05]} />
+      </mesh>
+    );
+  };
+
   return (
-    <>
-      <button onClick={toggleGraphics}>Graphics</button>
-      <Canvas>
-        <Earth position={[0, 0, 0]} />
-        <Clouds position={[0, 0, 0]} />
-      </Canvas>
-    </>
+    <Canvas>
+      <Earth position={[0, 0, 0]} />
+      <Clouds position={[0, 0, 0]} />
+      <SettingsButton position={[-1.75, 3.2, 0]} onClick={toggleGraphics} />
+    </Canvas>
   );
 };
 
