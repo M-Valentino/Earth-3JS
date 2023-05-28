@@ -7,30 +7,52 @@ import react from "./images/clouds.png";
 // https://www.pngkey.com/detail/u2w7w7t4r5e6q8y3_earth-clouds-2048-earth-clouds-texture-png/
 import TwoKEarth from "./images/2k_earth_daymap.webp";
 import FourKEarth from "./images/4k_earth_daymap.webp";
+import moon720p from "./images/720p_moon.webp";
+import moon360p from "./images/360p_moon.webp";
 
 const App = () => {
-  const [textureToUse, setTextureToUse] = React.useState(FourKEarth);
-  const [sphereTrisAmount, setSphereTrisAmount] = React.useState(64);
+  const [earthTextureToUse, setEarthTextureToUse] = React.useState(FourKEarth);
+  const [moonTextureToUse, setMoonTextureToUse] = React.useState(moon720p);
+  const [earthTrisAmount, setEarthTrisAmount] = React.useState(64);
+  const [moonTrisAmount, setMoonTrisAmount] = React.useState(32);
 
-  const handleSetTexture = () => {
-    if (textureToUse === TwoKEarth) {
-      setTextureToUse(FourKEarth);
+  const handleSetEarthTexture = () => {
+    if (earthTextureToUse === TwoKEarth) {
+      setEarthTextureToUse(FourKEarth);
     } else {
-      setTextureToUse(TwoKEarth);
+      setEarthTextureToUse(TwoKEarth);
     }
   };
 
-  const handleSetSphereTris = () => {
-    if (sphereTrisAmount === 64) {
-      setSphereTrisAmount(32);
+  const handleSetMoonTexture = () => {
+    if (earthTextureToUse === moon360p) {
+      setMoonTextureToUse(moon720p);
     } else {
-      setSphereTrisAmount(64);
+      setMoonTextureToUse(moon360p);
+    }
+  };
+
+  const handleSetEarthTris = () => {
+    if (earthTrisAmount === 64) {
+      setEarthTrisAmount(32);
+    } else {
+      setEarthTrisAmount(64);
+    }
+  };
+
+  const handleSetMoonTris = () => {
+    if (moonTrisAmount === 32) {
+      setMoonTrisAmount(16);
+    } else {
+      setMoonTrisAmount(32);
     }
   };
 
   const toggleGraphics = () => {
-    handleSetSphereTris();
-    handleSetTexture();
+    handleSetEarthTexture();
+    handleSetMoonTexture();
+    handleSetEarthTris();
+    handleSetMoonTris();
   };
 
   const Earth = (props) => {
@@ -40,7 +62,7 @@ const App = () => {
     });
 
     const texture = useMemo(
-      () => new THREE.TextureLoader().load(textureToUse),
+      () => new THREE.TextureLoader().load(earthTextureToUse),
       []
     );
 
@@ -48,7 +70,7 @@ const App = () => {
       <mesh {...props} ref={mesh} scale={[2, 2, 2]}>
         <sphereBufferGeometry
           color="blue"
-          args={[1, sphereTrisAmount, sphereTrisAmount]}
+          args={[1, earthTrisAmount, earthTrisAmount]}
         />
         <meshStandardMaterial attach="material">
           <primitive attach="map" object={texture} />
@@ -69,7 +91,7 @@ const App = () => {
       <mesh {...props} ref={mesh} scale={[2.01, 2.01, 2.01]}>
         <sphereBufferGeometry
           transparent={true}
-          args={[1, sphereTrisAmount, sphereTrisAmount]}
+          args={[1, earthTrisAmount, earthTrisAmount]}
         />
         <meshBasicMaterial attach="material" transparent={true}>
           <primitive attach="map" object={texture}  />
@@ -77,6 +99,33 @@ const App = () => {
       </mesh>
     );
   };
+
+  const Moon = (props) => {
+    let angle = 0;
+    
+    let radius = 5;
+    const mesh = useRef();
+    useFrame(() => {
+      mesh.current.rotation.y -= 0.001;
+      angle += Math.acos(1-Math.pow(0.01/radius,2)/2);
+      mesh.current.position.z = radius * Math.cos(angle);
+      mesh.current.position.x = radius * Math.sin(angle);
+    });
+
+    const texture = useMemo(() => new THREE.TextureLoader().load(moonTextureToUse), []);
+
+    return (
+      <mesh {...props} ref={mesh} scale={[0.4, 0.4, 0.4]}>
+        <sphereBufferGeometry
+          transparent={true}
+          args={[1, moonTrisAmount, moonTrisAmount]}
+        />
+        <meshStandardMaterial attach="material">
+          <primitive attach="map" object={texture}  />
+          </meshStandardMaterial>
+      </mesh>
+    );
+  }
 
   const SettingsButton = (props) => {
     const [hovered, setHovered] = useState(false);
@@ -106,13 +155,16 @@ const App = () => {
   };
 
   return (
-    <Canvas>
-      <Earth position={[0, 0, 0]} />
-      <Clouds position={[0, 0, 0]} />
-      <SettingsButton position={[-1.75, 3.2, 0]} onClick={toggleGraphics} />
+    <Canvas camera={{position: [0,0,8.5], fov: 40}}>
+   
+      <Earth position={[0, -0.1, 0]} />
+      <Clouds position={[0, -0.1, 0]} />
+      <Moon position={[3,0,2]} />
+      <SettingsButton position={[-1.75, 2.5, 0]} onClick={toggleGraphics} />
       <ambientLight intensity={0.1} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
-      <pointLight position={[-1.65, 7.2, 1]} angle={0.5} penumbra={0.5}/>
+      <pointLight position={[-5, 5, 1]} intensity={0.2} angle={0} penumbra={0}/>
+   
     </Canvas>
   );
 };
