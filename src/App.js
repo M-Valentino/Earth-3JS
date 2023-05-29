@@ -2,7 +2,8 @@ import React, { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "react-three-fiber";
 import * as THREE from "three";
 import "./App.css";
-import react from "./images/clouds.png";
+import clouds3k from "./images/3k_earth_clouds.webp";
+import clouds1080p from "./images/1080p_earth_clouds.webp";
 // https://www.solarsystemscope.com/textures/
 // https://www.pngkey.com/detail/u2w7w7t4r5e6q8y3_earth-clouds-2048-earth-clouds-texture-png/
 import TwoKEarth from "./images/2k_earth_daymap.webp";
@@ -13,7 +14,8 @@ import moon360p from "./images/360p_moon.webp";
 const App = () => {
   const [earthTextureToUse, setEarthTextureToUse] = React.useState(FourKEarth);
   const [moonTextureToUse, setMoonTextureToUse] = React.useState(moon720p);
-  const [earthTrisAmount, setEarthTrisAmount] = React.useState(64);
+  const [cloudsTextureToUse, setCloudsTextureToUse] = React.useState(clouds3k);
+  const [cloudTrisAmount, setCloudTrisAmount] = React.useState(64);
   const [moonTrisAmount, setMoonTrisAmount] = React.useState(32);
 
   const handleSetEarthTexture = () => {
@@ -21,6 +23,14 @@ const App = () => {
       setEarthTextureToUse(FourKEarth);
     } else {
       setEarthTextureToUse(TwoKEarth);
+    }
+  };
+
+  const handleSetCloudsTexture = () => {
+    if (cloudsTextureToUse === clouds3k) {
+      setCloudsTextureToUse(clouds1080p);
+    } else {
+      setCloudsTextureToUse(clouds3k);
     }
   };
 
@@ -32,11 +42,11 @@ const App = () => {
     }
   };
 
-  const handleSetEarthTris = () => {
-    if (earthTrisAmount === 64) {
-      setEarthTrisAmount(32);
+  const handleSetCloudTris = () => {
+    if (cloudTrisAmount === 64) {
+      setCloudTrisAmount(32);
     } else {
-      setEarthTrisAmount(64);
+      setCloudTrisAmount(64);
     }
   };
 
@@ -50,8 +60,9 @@ const App = () => {
 
   const toggleGraphics = () => {
     handleSetEarthTexture();
+    handleSetCloudsTexture();
     handleSetMoonTexture();
-    handleSetEarthTris();
+    handleSetCloudTris();
     handleSetMoonTris();
   };
 
@@ -70,7 +81,7 @@ const App = () => {
       <mesh {...props} ref={mesh} scale={[2, 2, 2]}>
         <sphereBufferGeometry
           color="blue"
-          args={[1, earthTrisAmount, earthTrisAmount]}
+          args={[1, cloudTrisAmount, cloudTrisAmount]}
         />
         <meshStandardMaterial attach="material">
           <primitive attach="map" object={texture} />
@@ -85,16 +96,16 @@ const App = () => {
       mesh.current.rotation.y += 0.001;
     });
 
-    const texture = useMemo(() => new THREE.TextureLoader().load(react), []);
+    const texture = useMemo(() => new THREE.TextureLoader().load(cloudsTextureToUse), []);
 
     return (
-      <mesh {...props} ref={mesh} scale={[2.01, 2.01, 2.01]}>
+      <mesh {...props} ref={mesh} scale={[2.005, 2.005, 2.005]}>
         <sphereBufferGeometry
           transparent={true}
-          args={[1, earthTrisAmount, earthTrisAmount]}
+          args={[1, 64, 64]}
         />
         <meshBasicMaterial attach="material" transparent={true}>
-          <primitive attach="map" object={texture}  />
+          <primitive attach="map" object={texture} />
         </meshBasicMaterial>
       </mesh>
     );
@@ -102,17 +113,20 @@ const App = () => {
 
   const Moon = (props) => {
     let angle = 0;
-    
+
     let radius = 5;
     const mesh = useRef();
     useFrame(() => {
       mesh.current.rotation.y -= 0.001;
-      angle += Math.acos(1-Math.pow(0.01/radius,2)/2);
+      angle += Math.acos(1 - Math.pow(0.01 / radius, 2) / 2);
       mesh.current.position.z = radius * Math.cos(angle);
       mesh.current.position.x = radius * Math.sin(angle);
     });
 
-    const texture = useMemo(() => new THREE.TextureLoader().load(moonTextureToUse), []);
+    const texture = useMemo(
+      () => new THREE.TextureLoader().load(moonTextureToUse),
+      []
+    );
 
     return (
       <mesh {...props} ref={mesh} scale={[0.4, 0.4, 0.4]}>
@@ -121,11 +135,11 @@ const App = () => {
           args={[1, moonTrisAmount, moonTrisAmount]}
         />
         <meshStandardMaterial attach="material">
-          <primitive attach="map" object={texture}  />
-          </meshStandardMaterial>
+          <primitive attach="map" object={texture} />
+        </meshStandardMaterial>
       </mesh>
     );
-  }
+  };
 
   const SettingsButton = (props) => {
     const [hovered, setHovered] = useState(false);
@@ -147,24 +161,26 @@ const App = () => {
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-
         <boxBufferGeometry args={[1.2, 0.5, 0.05]} />
-        <meshStandardMaterial color='white'/>
+        <meshStandardMaterial color="white" />
       </mesh>
     );
   };
 
   return (
-    <Canvas camera={{position: [0,0,8.5], fov: 40}}>
-   
+    <Canvas camera={{ position: [0, 0, 8.5], fov: 40 }}>
       <Earth position={[0, -0.1, 0]} />
       <Clouds position={[0, -0.1, 0]} />
-      <Moon position={[3,0,2]} />
+      <Moon position={[3, 0, 2]} />
       <SettingsButton position={[-1.75, 2.5, 0]} onClick={toggleGraphics} />
       <ambientLight intensity={0.1} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
-      <pointLight position={[-5, 5, 1]} intensity={0.2} angle={0} penumbra={0}/>
-   
+      <pointLight
+        position={[-5, 5, 1]}
+        intensity={0.2}
+        angle={0}
+        penumbra={0}
+      />
     </Canvas>
   );
 };
