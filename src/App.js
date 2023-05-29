@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "react-three-fiber";
-import { Text, OrbitControls } from "@react-three/drei";
+import { Text, OrbitControls, Stats } from "@react-three/drei";
 import * as THREE from "three";
 import "./App.css";
 import clouds3k from "./images/3k_earth_clouds.webp";
@@ -11,6 +11,7 @@ import TwoKEarth from "./images/2k_earth_daymap.webp";
 import FourKEarth from "./images/4k_earth_daymap.webp";
 import moon720p from "./images/720p_moon.webp";
 import moon360p from "./images/360p_moon.webp";
+
 
 const App = () => {
   const [textSaysLow, setTextSaysLow] = React.useState(true);
@@ -80,9 +81,16 @@ const App = () => {
           color="blue"
           args={[1, cloudTrisAmount, cloudTrisAmount]}
         />
-        <meshStandardMaterial attach="material">
-          <primitive attach="map" object={texture} />
-        </meshStandardMaterial>
+        {textSaysLow && (
+          <meshStandardMaterial attach="material">
+            <primitive attach="map" object={texture} />
+          </meshStandardMaterial>
+        )}
+        {!textSaysLow && (
+          <meshBasicMaterial attach="material">
+            <primitive attach="map" object={texture} />
+          </meshBasicMaterial>
+        )}
       </mesh>
     );
   };
@@ -105,10 +113,16 @@ const App = () => {
     return (
       <mesh {...props} ref={mesh} scale={[2.005, 2.005, 2.005]}>
         <sphereBufferGeometry transparent={true} args={[1, 64, 64]} />
-        <meshBasicMaterial attach="material" transparent={true}>
-          <primitive attach="map" object={texture} />
-        </meshBasicMaterial>
-        <OrbitControls />
+        {textSaysLow && (
+          <meshStandardMaterial attach="material" transparent={true}>
+            <primitive attach="map" object={texture} />
+          </meshStandardMaterial>
+        )}
+        {!textSaysLow && (
+          <meshBasicMaterial attach="material" transparent={true}>
+            <primitive attach="map" object={texture} />
+          </meshBasicMaterial>
+        )}
       </mesh>
     );
   };
@@ -136,9 +150,17 @@ const App = () => {
           transparent={true}
           args={[1, moonTrisAmount, moonTrisAmount]}
         />
-        <meshStandardMaterial attach="material">
-          <primitive attach="map" object={texture} />
-        </meshStandardMaterial>
+        
+        {textSaysLow && (
+          <meshStandardMaterial attach="material">
+            <primitive attach="map" object={texture} />
+          </meshStandardMaterial>
+        )}
+        {!textSaysLow && (
+          <meshBasicMaterial attach="material">
+            <primitive attach="map" object={texture} />
+          </meshBasicMaterial>
+        )}
       </mesh>
     );
   };
@@ -169,7 +191,9 @@ const App = () => {
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        <Text depthTest={true} fillOpacity={0.5}>Toggle {textSaysLow? 'Low' : 'High'} Settings</Text>
+        <Text depthTest={true} fillOpacity={0.5}>
+          Toggle {textSaysLow ? "Low" : "High"} Settings
+        </Text>
         <meshStandardMaterial color="white" />
       </mesh>
     );
@@ -181,14 +205,26 @@ const App = () => {
       <Clouds position={[0, -0.1, 0]} />
       <Moon position={[3, 0, 2]} />
       <SettingsButton position={[-1.75, 2.9, 0]} onClick={toggleGraphics} />
-      <ambientLight intensity={0.1} />
-      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
-      <pointLight
-        position={[-5, 5, 1]}
-        intensity={0.2}
-        angle={0}
-        penumbra={0}
-      />
+      {textSaysLow && (
+        <>
+          <ambientLight intensity={0.1} />
+          <spotLight
+            position={[10, 10, 10]}
+            angle={0.15}
+            penumbra={1}
+            castShadow
+          />
+          <pointLight
+            position={[-5, 5, 1]}
+            intensity={0.2}
+            angle={0}
+            penumbra={0}
+            castShadow
+          />
+        </>
+      )}
+      <OrbitControls />
+      <Stats/>
     </Canvas>
   );
 };
