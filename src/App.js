@@ -81,7 +81,7 @@ const App = () => {
           args={[1, earthTrisAmount, earthTrisAmount]}
         />
         {textSaysLow && (
-          <meshStandardMaterial attach="material">
+          <meshStandardMaterial attach="material" roughness={1}>
             <primitive attach="map" object={texture} />
           </meshStandardMaterial>
         )}
@@ -151,7 +151,7 @@ const App = () => {
         />
 
         {textSaysLow && (
-          <meshStandardMaterial attach="material">
+          <meshStandardMaterial attach="material" roughness={1}>
             <primitive attach="map" object={texture} />
           </meshStandardMaterial>
         )}
