@@ -81,7 +81,7 @@ const App = () => {
           args={[1, earthTrisAmount, earthTrisAmount]}
         />
         {textSaysLow && (
-          <meshStandardMaterial attach="material" roughness={1}>
+          <meshStandardMaterial attach="material" roughness={0.7} metalness={0.05}>
             <primitive attach="map" object={texture} />
           </meshStandardMaterial>
         )}
@@ -210,12 +210,13 @@ const App = () => {
       <SettingsButton position={[-1.75, 2.9, 0]} onClick={toggleGraphics} />
       {textSaysLow && (
         <>
-          <ambientLight intensity={0.1} />
+          <ambientLight intensity={0.1} color='#ffffff'/>
           <spotLight
             position={[10, 10, 10]}
             angle={0.15}
             penumbra={1}
             castShadow
+            color='#fffff5'
           />
           <pointLight
             position={[-5, 5, 1]}
@@ -223,6 +224,7 @@ const App = () => {
             angle={0}
             penumbra={0}
             castShadow
+            color='#fffff5'
           />
         </>
       )}
