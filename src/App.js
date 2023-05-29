@@ -18,7 +18,7 @@ const App = () => {
   const [earthTextureToUse, setEarthTextureToUse] = React.useState(FourKEarth);
   const [moonTextureToUse, setMoonTextureToUse] = React.useState(moon720p);
   const [cloudsTextureToUse, setCloudsTextureToUse] = React.useState(clouds3k);
-  const [cloudTrisAmount, setCloudTrisAmount] = React.useState(64);
+  const [earthTrisAmount, setEarthTrisAmount] = React.useState(64);
   const [moonTrisAmount, setMoonTrisAmount] = React.useState(32);
 
   /**
@@ -45,10 +45,10 @@ const App = () => {
       setMoonTextureToUse(moon360p);
     }
 
-    if (cloudTrisAmount === 64) {
-      setCloudTrisAmount(32);
+    if (earthTrisAmount === 64) {
+      setEarthTrisAmount(32);
     } else {
-      setCloudTrisAmount(64);
+      setEarthTrisAmount(64);
     }
 
     if (moonTrisAmount === 32) {
@@ -79,7 +79,7 @@ const App = () => {
       <mesh {...props} ref={mesh} scale={[2, 2, 2]}>
         <sphereBufferGeometry
           color="blue"
-          args={[1, cloudTrisAmount, cloudTrisAmount]}
+          args={[1, earthTrisAmount, earthTrisAmount]}
         />
         {textSaysLow && (
           <meshStandardMaterial attach="material">
