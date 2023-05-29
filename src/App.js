@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "react-three-fiber";
-import { OrbitControls } from '@react-three/drei'
+import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import "./App.css";
 import clouds3k from "./images/3k_earth_clouds.webp";
@@ -19,6 +19,11 @@ const App = () => {
   const [cloudTrisAmount, setCloudTrisAmount] = React.useState(64);
   const [moonTrisAmount, setMoonTrisAmount] = React.useState(32);
 
+  /**
+   * Function to toggle the graphics settings of various elements from highest
+   * to lowest. It affects tri counts and texture sizes. The tri count of the
+   * Earth sphere does not lower since it would clip through the clouds sphere.
+   */
   const toggleGraphics = () => {
     if (earthTextureToUse === TwoKEarth) {
       setEarthTextureToUse(FourKEarth);
@@ -75,6 +80,10 @@ const App = () => {
     );
   };
 
+  /**
+   * The clouds sphere is slightly larger than the Earth sphere. The Earth sphere
+   * goes inside the clouds sphere.
+   */
   const Clouds = (props) => {
     const mesh = useRef();
     useFrame(() => {
@@ -97,9 +106,9 @@ const App = () => {
     );
   };
 
+  // The moon orbits and rotates slightly.
   const Moon = (props) => {
     let angle = 0;
-
     let radius = 5;
     const mesh = useRef();
     useFrame(() => {
@@ -128,17 +137,23 @@ const App = () => {
   };
 
   const SettingsButton = (props) => {
+    /**
+     * This tracks wether mouse cursor is on the button so that the cursor can 
+     * change to a pointer.
+     */
     const [hovered, setHovered] = useState(false);
 
     useEffect(() => {
       document.body.style.cursor = hovered ? "pointer" : "auto";
     }, [hovered]);
     const mesh = useRef();
+
     useFrame(() => {
       mesh.current.rotation.x = Math.sin(Date.now() * 0.001) * Math.PI * 0.01;
       mesh.current.rotation.y = Math.sin(Date.now() * 0.001) * Math.PI * 0.004;
       mesh.current.rotation.z = Math.sin(Date.now() * 0.001) * Math.PI * 0.015;
     });
+
     return (
       <mesh
         {...props}
