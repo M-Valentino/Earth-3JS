@@ -17,7 +17,7 @@ const App = () => {
   const [earthTextureToUse, setEarthTextureToUse] = React.useState(FourKEarth);
   const [moonTextureToUse, setMoonTextureToUse] = React.useState(moon720p);
   const [cloudsTextureToUse, setCloudsTextureToUse] = React.useState(clouds3k);
-  const [earthTrisAmount, setEarthTrisAmount] = React.useState(64);
+  const [earthTrisAmount, setEarthTrisAmount] = React.useState(128);
   const [moonTrisAmount, setMoonTrisAmount] = React.useState(32);
 
   /**
@@ -44,10 +44,10 @@ const App = () => {
       setMoonTextureToUse(moon360p);
     }
 
-    if (earthTrisAmount === 64) {
+    if (earthTrisAmount === 128) {
       setEarthTrisAmount(32);
     } else {
-      setEarthTrisAmount(64);
+      setEarthTrisAmount(128);
     }
 
     if (moonTrisAmount === 32) {
