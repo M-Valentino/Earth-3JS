@@ -12,7 +12,6 @@ import FourKEarth from "./images/4k_earth_daymap.webp";
 import moon720p from "./images/720p_moon.webp";
 import moon360p from "./images/360p_moon.webp";
 
-
 const App = () => {
   const [textSaysLow, setTextSaysLow] = React.useState(true);
   const [earthTextureToUse, setEarthTextureToUse] = React.useState(FourKEarth);
@@ -150,7 +149,7 @@ const App = () => {
           transparent={true}
           args={[1, moonTrisAmount, moonTrisAmount]}
         />
-        
+
         {textSaysLow && (
           <meshStandardMaterial attach="material">
             <primitive attach="map" object={texture} />
@@ -178,9 +177,13 @@ const App = () => {
     const mesh = useRef();
 
     useFrame(() => {
-      mesh.current.rotation.x = Math.sin(Date.now() * 0.001) * Math.PI * 0.01;
-      mesh.current.rotation.y = Math.sin(Date.now() * 0.001) * Math.PI * 0.004;
-      mesh.current.rotation.z = Math.sin(Date.now() * 0.001) * Math.PI * 0.015;
+      if (textSaysLow) {
+        mesh.current.rotation.x = Math.sin(Date.now() * 0.001) * Math.PI * 0.01;
+        mesh.current.rotation.y =
+          Math.sin(Date.now() * 0.001) * Math.PI * 0.004;
+        mesh.current.rotation.z =
+          Math.sin(Date.now() * 0.001) * Math.PI * 0.015;
+      }
     });
 
     return (
@@ -224,7 +227,7 @@ const App = () => {
         </>
       )}
       <OrbitControls />
-      <Stats/>
+      <Stats />
     </Canvas>
   );
 };
