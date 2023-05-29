@@ -76,12 +76,13 @@ const App = () => {
 
     return (
       <mesh {...props} ref={mesh} scale={[2, 2, 2]}>
-        <sphereBufferGeometry
-          color="blue"
-          args={[1, earthTrisAmount, earthTrisAmount]}
-        />
+        <sphereBufferGeometry args={[1, earthTrisAmount, earthTrisAmount]} />
         {textSaysLow && (
-          <meshStandardMaterial attach="material" roughness={0.7} metalness={0.05}>
+          <meshStandardMaterial
+            attach="material"
+            roughness={0.7}
+            metalness={0.05}
+          >
             <primitive attach="map" object={texture} />
           </meshStandardMaterial>
         )}
@@ -197,7 +198,6 @@ const App = () => {
         <Text depthTest={true} fillOpacity={0.5}>
           Toggle {textSaysLow ? "Low" : "High"} Settings
         </Text>
-        <meshStandardMaterial color="white" />
       </mesh>
     );
   };
@@ -210,13 +210,13 @@ const App = () => {
       <SettingsButton position={[-1.75, 2.9, 0]} onClick={toggleGraphics} />
       {textSaysLow && (
         <>
-          <ambientLight intensity={0.1} color='#ffffff'/>
+          <ambientLight intensity={0.1} color="#ffffff" />
           <spotLight
             position={[10, 10, 10]}
             angle={0.15}
             penumbra={1}
             castShadow
-            color='#fffff5'
+            color="#fffff5"
           />
           <pointLight
             position={[-5, 5, 1]}
@@ -224,7 +224,7 @@ const App = () => {
             angle={0}
             penumbra={0}
             castShadow
-            color='#fffff5'
+            color="#fffff5"
           />
         </>
       )}
