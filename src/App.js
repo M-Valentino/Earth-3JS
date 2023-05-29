@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "react-three-fiber";
-import { OrbitControls } from "@react-three/drei";
+import { Text, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import "./App.css";
 import clouds3k from "./images/3k_earth_clouds.webp";
@@ -13,6 +13,7 @@ import moon720p from "./images/720p_moon.webp";
 import moon360p from "./images/360p_moon.webp";
 
 const App = () => {
+  const [textSaysLow, setTextSaysLow] = React.useState(true);
   const [earthTextureToUse, setEarthTextureToUse] = React.useState(FourKEarth);
   const [moonTextureToUse, setMoonTextureToUse] = React.useState(moon720p);
   const [cloudsTextureToUse, setCloudsTextureToUse] = React.useState(clouds3k);
@@ -53,6 +54,12 @@ const App = () => {
       setMoonTrisAmount(16);
     } else {
       setMoonTrisAmount(32);
+    }
+
+    if (textSaysLow) {
+      setTextSaysLow(false);
+    } else {
+      setTextSaysLow(true);
     }
   };
 
@@ -138,7 +145,7 @@ const App = () => {
 
   const SettingsButton = (props) => {
     /**
-     * This tracks wether mouse cursor is on the button so that the cursor can 
+     * This tracks wether mouse cursor is on the button so that the cursor can
      * change to a pointer.
      */
     const [hovered, setHovered] = useState(false);
@@ -158,11 +165,11 @@ const App = () => {
       <mesh
         {...props}
         ref={mesh}
-        scale={[1, 1, 1]}
+        scale={[0.15, 0.15, 0.15]}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        <boxBufferGeometry args={[1.2, 0.5, 0.05]} />
+        <Text depthTest={true} fillOpacity={0.5}>Toggle {textSaysLow? 'Low' : 'High'} Settings</Text>
         <meshStandardMaterial color="white" />
       </mesh>
     );
@@ -173,7 +180,7 @@ const App = () => {
       <Earth position={[0, -0.1, 0]} />
       <Clouds position={[0, -0.1, 0]} />
       <Moon position={[3, 0, 2]} />
-      <SettingsButton position={[-1.75, 2.5, 0]} onClick={toggleGraphics} />
+      <SettingsButton position={[-1.75, 2.9, 0]} onClick={toggleGraphics} />
       <ambientLight intensity={0.1} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
       <pointLight
