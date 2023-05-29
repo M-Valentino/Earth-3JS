@@ -1,5 +1,6 @@
 import React, { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "react-three-fiber";
+import { OrbitControls } from '@react-three/drei'
 import * as THREE from "three";
 import "./App.css";
 import clouds3k from "./images/3k_earth_clouds.webp";
@@ -18,52 +19,36 @@ const App = () => {
   const [cloudTrisAmount, setCloudTrisAmount] = React.useState(64);
   const [moonTrisAmount, setMoonTrisAmount] = React.useState(32);
 
-  const handleSetEarthTexture = () => {
+  const toggleGraphics = () => {
     if (earthTextureToUse === TwoKEarth) {
       setEarthTextureToUse(FourKEarth);
     } else {
       setEarthTextureToUse(TwoKEarth);
     }
-  };
 
-  const handleSetCloudsTexture = () => {
     if (cloudsTextureToUse === clouds3k) {
       setCloudsTextureToUse(clouds1080p);
     } else {
       setCloudsTextureToUse(clouds3k);
     }
-  };
 
-  const handleSetMoonTexture = () => {
     if (earthTextureToUse === moon360p) {
       setMoonTextureToUse(moon720p);
     } else {
       setMoonTextureToUse(moon360p);
     }
-  };
 
-  const handleSetCloudTris = () => {
     if (cloudTrisAmount === 64) {
       setCloudTrisAmount(32);
     } else {
       setCloudTrisAmount(64);
     }
-  };
 
-  const handleSetMoonTris = () => {
     if (moonTrisAmount === 32) {
       setMoonTrisAmount(16);
     } else {
       setMoonTrisAmount(32);
     }
-  };
-
-  const toggleGraphics = () => {
-    handleSetEarthTexture();
-    handleSetCloudsTexture();
-    handleSetMoonTexture();
-    handleSetCloudTris();
-    handleSetMoonTris();
   };
 
   const Earth = (props) => {
@@ -96,17 +81,18 @@ const App = () => {
       mesh.current.rotation.y += 0.001;
     });
 
-    const texture = useMemo(() => new THREE.TextureLoader().load(cloudsTextureToUse), []);
+    const texture = useMemo(
+      () => new THREE.TextureLoader().load(cloudsTextureToUse),
+      []
+    );
 
     return (
       <mesh {...props} ref={mesh} scale={[2.005, 2.005, 2.005]}>
-        <sphereBufferGeometry
-          transparent={true}
-          args={[1, 64, 64]}
-        />
+        <sphereBufferGeometry transparent={true} args={[1, 64, 64]} />
         <meshBasicMaterial attach="material" transparent={true}>
           <primitive attach="map" object={texture} />
         </meshBasicMaterial>
+        <OrbitControls />
       </mesh>
     );
   };
