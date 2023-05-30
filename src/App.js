@@ -82,6 +82,7 @@ const App = () => {
             attach="material"
             roughness={0.7}
             metalness={0.05}
+            dithering={true}
           >
             <primitive attach="map" object={texture} />
           </meshStandardMaterial>
