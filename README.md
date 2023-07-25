@@ -1,6 +1,5 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Earth 3JS
+View a 3D model of Earth with the moon orbiting around in right in your browser! This was created in React with [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction) and [drei](https://github.com/pmndrs/drei).
 
 ## Available Scripts
 
