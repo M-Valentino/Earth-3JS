@@ -1,5 +1,6 @@
 # Earth 3JS
 View a 3D model of Earth with the moon orbiting around in right in your browser! This was created in React with [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction) and [drei](https://github.com/pmndrs/drei).
+![earth3js](https://github.com/M-Valentino/Earth-3JS/assets/79779618/eca89996-002c-40ec-98d7-93b472fd0fbc)
 
 ## Available Scripts
 
