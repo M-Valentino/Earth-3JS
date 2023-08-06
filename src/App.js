@@ -2,7 +2,7 @@ import React, { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "react-three-fiber";
 import { Text, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import { Typography } from "@mui/material";
+import { Slider, Typography } from "@mui/material";
 
 import clouds3k from "./images/3k_earth_clouds.webp";
 import clouds1080p from "./images/1080p_earth_clouds.webp";
@@ -15,15 +15,20 @@ import moon360p from "./images/360p_moon.webp";
  * This page shows a 3D model of Earth with the moon orbiting around it. There is
  * floating 3D text that can be clicked to toggle between low or high settings.
  * Both the moon and Earth slowly rotate. The clouds on Earth rotate slightly faster
- * than Earth itself. There are orbit controls too.
+ * than Earth itself. There are orbit controls too as well as a slider that controls
+ * the simulation speed.
  */
 export const Earth3JS = () => {
-  const [settingsAreLow, setSettingsAreLow] = React.useState(true);
-  const [earthTextureToUse, setEarthTextureToUse] = React.useState(FourKEarth);
-  const [moonTextureToUse, setMoonTextureToUse] = React.useState(moon720p);
-  const [cloudsTextureToUse, setCloudsTextureToUse] = React.useState(clouds3k);
-  const [earthTrisAmount, setEarthTrisAmount] = React.useState(128);
-  const [moonTrisAmount, setMoonTrisAmount] = React.useState(32);
+  const [settingsAreLow, setSettingsAreLow] = useState(true);
+  const [earthTextureToUse, setEarthTextureToUse] = useState(FourKEarth);
+  const [moonTextureToUse, setMoonTextureToUse] = useState(moon720p);
+  const [cloudsTextureToUse, setCloudsTextureToUse] = useState(clouds3k);
+  const [earthTrisAmount, setEarthTrisAmount] = useState(128);
+  const [moonTrisAmount, setMoonTrisAmount] = useState(32);
+  /** For handling the speed of everything that is moving on the screen.
+   *  The speed is set with the slider controls.
+   */
+  const [simulationSpeed, setSimulationSpeed] = useState(1);
 
   /**
    * Function to toggle the graphics settings of various elements from highest
@@ -71,7 +76,7 @@ export const Earth3JS = () => {
   const Earth = (props) => {
     const mesh = useRef();
     useFrame(() => {
-      mesh.current.rotation.y += 0.0008;
+      mesh.current.rotation.y += simulationSpeed * 0.0008;
     });
 
     const texture = useMemo(
@@ -108,7 +113,7 @@ export const Earth3JS = () => {
   const Clouds = (props) => {
     const mesh = useRef();
     useFrame(() => {
-      mesh.current.rotation.y += 0.001;
+      mesh.current.rotation.y += simulationSpeed * 0.001;
     });
 
     const texture = useMemo(
@@ -139,8 +144,8 @@ export const Earth3JS = () => {
     let radius = 5;
     const mesh = useRef();
     useFrame(() => {
-      mesh.current.rotation.y -= 0.001;
-      angle += Math.acos(1 - Math.pow(0.01 / radius, 2) / 2);
+      mesh.current.rotation.y -= 0.001 * simulationSpeed;
+      angle += Math.acos(1 - Math.pow(0.01 / radius, 2) / 2) * simulationSpeed;
       mesh.current.position.z = radius * Math.cos(angle);
       mesh.current.position.x = radius * Math.sin(angle);
     });
@@ -185,11 +190,12 @@ export const Earth3JS = () => {
 
     useFrame(() => {
       if (settingsAreLow) {
-        mesh.current.rotation.x = Math.sin(Date.now() * 0.001) * Math.PI * 0.01;
+        mesh.current.rotation.x =
+          simulationSpeed * (Math.sin(Date.now() * 0.001) * Math.PI * 0.01);
         mesh.current.rotation.y =
-          Math.sin(Date.now() * 0.001) * Math.PI * 0.004;
+          simulationSpeed * (Math.sin(Date.now() * 0.001) * Math.PI * 0.004);
         mesh.current.rotation.z =
-          Math.sin(Date.now() * 0.001) * Math.PI * 0.015;
+          simulationSpeed * (Math.sin(Date.now() * 0.001) * Math.PI * 0.015);
       }
     });
 
@@ -201,7 +207,7 @@ export const Earth3JS = () => {
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        <Text depthTest={true} fillOpacity={0.5}>
+        <Text depthTest={true} fillOpacity={0.85}>
           Toggle {settingsAreLow ? "Low" : "High"} Settings
         </Text>
       </mesh>
@@ -210,75 +216,115 @@ export const Earth3JS = () => {
 
   return (
     <>
-      <Canvas
-        camera={{ position: [0, 0, 8.5], fov: 40 }}
-        style={{
-          width: "100%",
-          height: "100vh",
-          objectFit: "cover",
-          backgroundImage: "url('/earth3JS/8k_stars.webp')",
-          backgroundSize: "cover",
-          backgroundColor: "black",
-          boxShadow:
-            "0 0 200px rgba(0,0,0,0.4) inset, 0 0 300px rgba(0,0,0,1) inset",
-        }}
-      >
-        <Earth position={[0, -0.1, 0]} />
-        <Clouds position={[0, -0.1, 0]} />
-        <Moon position={[3, 0, 2]} />
-        <SettingsButton position={[-1.75, 2.9, 0]} onClick={toggleGraphics} />
-        {settingsAreLow && (
-          <>
-            <ambientLight intensity={0.1} color="#ffffff" />
-            <spotLight
-              position={[10, 10, 10]}
-              angle={0.15}
-              penumbra={1}
-              castShadow
-              color="#fffff5"
+      <head>
+        <title>Earth 3JS</title>
+        <meta name="description" content="Generated by create next app" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </head>
+      <main style={{ maxHeight: "100vh", overflow: "hidden" }}>
+        {/* <ThemeProvider theme={MainTheme}> */}
+          <Canvas
+            camera={{ position: [0, 0, 8.5], fov: 40 }}
+            style={{
+              width: "100%",
+              height: "100vh",
+              objectFit: "cover",
+              backgroundImage: "url('/earth3JS/8k_stars.webp')",
+              backgroundSize: "cover",
+              backgroundColor: "black",
+              boxShadow:
+                "0 0 200px rgba(0,0,0,0.4) inset, 0 0 300px rgba(0,0,0,1) inset",
+            }}
+          >
+            <Earth position={[0, -0.1, 0]} />
+            <Clouds position={[0, -0.1, 0]} />
+            <Moon position={[3, 0, 2]} />
+            <SettingsButton
+              position={[-1.55, 2.5, 0]}
+              onClick={toggleGraphics}
             />
-            <pointLight
-              position={[-5, 5, 1]}
-              intensity={0.2}
-              angle={0}
-              penumbra={0}
-              castShadow
-              color="#fffff5"
+            {settingsAreLow && (
+              <>
+                <ambientLight intensity={0.1} color="#ffffff" />
+                <spotLight
+                  position={[10, 10, 10]}
+                  angle={0.15}
+                  penumbra={1}
+                  castShadow
+                  color="#fffff5"
+                />
+                <pointLight
+                  position={[-5, 5, 1]}
+                  intensity={0.2}
+                  angle={0}
+                  penumbra={0}
+                  castShadow
+                  color="#fffff5"
+                />
+              </>
+            )}
+            <OrbitControls />
+          </Canvas>
+          <div
+            style={{
+              position: "absolute",
+              right: 20,
+              top: 25,
+              // backgroundColor: "#ccc",
+              opacity: 0.85,
+              paddingLeft: 2,
+              paddingRight: 2,
+              width: 100,
+            }}
+          >
+            <Slider
+              size="small"
+              defaultValue={simulationSpeed}
+              onChange={(_, newValue) => setSimulationSpeed(newValue)}
+              onChangeCommitted={(_, newValue) => setSimulationSpeed(newValue)}
+              valueLabelDisplay="auto"
+              step={0.25}
+              marks
+              min={0}
+              max={2.5}
             />
-          </>
-        )}
-        <OrbitControls />
-      </Canvas>
+            <Typography color="primary" style={{ fontSize: 12 }}>
+              Simulation Speed
+            </Typography>
+          </div>
 
-      <div
-        style={{
-          position: "absolute",
-          right: 0,
-          bottom: 0,
-          backgroundColor: "#ccc",
-          opacity: 0.5,
-          paddingLeft: 2,
-          paddingRight: 2,
-        }}
-      >
-        <Typography style={{ fontSize: 12 }}>
-          <a
-            href="https://www.solarsystemscope.com/textures/"
-            target="_blank"
-            rel="noopener noreferrer"
+          <div
+            style={{
+              position: "absolute",
+              right: 0,
+              bottom: 0,
+              backgroundColor: "#ccc",
+              opacity: 0.5,
+              paddingLeft: 2,
+              paddingRight: 2,
+            }}
           >
-            Earth, Clouds, and Moon Texture Source
-          </a>
-          &emsp;|&emsp;
-          <a
-            href="https://photojournal.jpl.nasa.gov/catalog/PIA12348"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Background Texture Source
-          </a>
-        </Typography>
-      </div>
+            <Typography style={{ fontSize: 12 }}>
+              <a
+                href="https://www.solarsystemscope.com/textures/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Earth, Clouds, and Moon Texture Source
+              </a>
+              &emsp;|&emsp;
+              <a
+                href="https://photojournal.jpl.nasa.gov/catalog/PIA12348"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Background Texture Source
+              </a>
+            </Typography>
+          </div>
+        {/* </ThemeProvider> */}
+      </main>
     </>
   );
 };
